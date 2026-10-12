@@ -3,6 +3,7 @@ from typing import Sequence
 
 # project
 from laplace_opt.model_construction import InputStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class GasJetTransverse(InputStructure):
@@ -13,22 +14,22 @@ class GasJetTransverse(InputStructure):
     hardware address, and metadata associated with the gas jet position
     along the transverse axis.
     '''
-
     def __init__(self, bounds: Sequence[float]=(0, 15)):
         '''
         Initialize the gas jet transerse input.
 
         Args:
-            bounds: (Sequence[float])
+            bounds (Sequence[float]):
                 Optimization bounds (min, max) in millimeters.
                 These define the search space limits.
         '''
         
         name = "gas_jet_transverse"
-        unit = "mm"
+        unit = "um"
         safe_bounds = (0.0, 15.0)
 
-        ip = "147.250.140.65"
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
         port = "5555"
 
         description = "Transverse position of the gas jet."

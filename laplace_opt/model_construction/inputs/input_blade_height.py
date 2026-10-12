@@ -3,6 +3,7 @@ from typing import Sequence
 
 # project
 from laplace_opt.model_construction import InputStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class BladeHeight(InputStructure):
@@ -13,22 +14,22 @@ class BladeHeight(InputStructure):
     hardware address, and metadata associated with the blade height
     control parameter.
     '''
-    
     def __init__(self, bounds: Sequence[float]=(150, 15000)):
         '''
         Initialize the blade height input.
 
         Args:
-            bounds: (Sequence[float]) 
-                Optimization bounds (min, max) in millimeters.
+            bounds (Sequence[float]): 
+                Optimization bounds (min, max) in micrometers.
                 These define the search space limits.
         '''
         name = "blade_height"
         unit = "um"
         safe_bounds = (100, 25000)
 
-        ip = "10.0.5.1"
-        port = "9633"
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        port = "5555"
         
         description = "Vertical position of the blade."
         symbol = "y_blade"

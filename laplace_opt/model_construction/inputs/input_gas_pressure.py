@@ -3,6 +3,7 @@ from typing import Sequence
 
 # project
 from laplace_opt.model_construction import InputStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class GasPressure(InputStructure):
@@ -13,20 +14,20 @@ class GasPressure(InputStructure):
     gas type, hardware address, and metadata associated with the gas
     pressure control variable.
     '''
-
     def __init__(self, gas_type: str = "N2", bounds: Sequence[float]=(0, 5)):
         
         name = "gas_pressure"
         unit = "bar"
         safe_bounds = (0.0, 100.0)
 
-        ip = "tmp"
-        port = "4"
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        port = "5555"
 
         description = "Gas pressure"
         symbol = "P_gas"
 
-        position_index = 0
+        position_index = 3
 
         self.gas_type = gas_type
         

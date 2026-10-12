@@ -50,7 +50,7 @@ class AcquisitionStructure(ABC):
             "default": True,
             "label": "example of bool parameter",
             "description": "tooltip for this parameter",
-        }
+        },
     }
 
 

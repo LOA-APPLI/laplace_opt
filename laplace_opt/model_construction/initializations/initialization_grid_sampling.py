@@ -7,7 +7,7 @@ from laplace_opt.model_construction import InitializationStructure
 
 class GridInitialization(InitializationStructure):
     '''Initialization strategy making a grid sampling.'''
-    
+
     display_name = "Grid Sampling"
     description = "Drawing a grid in the input space"
 
@@ -31,7 +31,7 @@ class GridInitialization(InitializationStructure):
         Generate an initial set of samples by making a regular grid.
 
         Args:
-            bounds: (torch.Tensor)
+            bounds (torch.Tensor):
                 Tensor of shape [2, d] defining lower and upper bounds
                 of the search space.
             

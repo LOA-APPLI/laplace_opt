@@ -3,6 +3,7 @@ from typing import Sequence
 
 # project
 from laplace_opt.model_construction import InputStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class GasJetHeight(InputStructure):
@@ -13,21 +14,21 @@ class GasJetHeight(InputStructure):
     hardware address, and metadata associated with the gas jet height
     control parameter.
     '''
-    
     def __init__(self, bounds: Sequence[float]=(0, 15)):
         '''
         Initialize the gas jet height input.
 
         Args:
-            bounds: (Sequence[float]) 
-                Optimization bounds (min, max) in millimeters.
+            bounds (Sequence[float]): 
+                Optimization bounds (min, max) in micrometers.
                 These define the search space limits.
         '''
         name = "gas_jet_height"
-        unit = "mm"
+        unit = "um"
         safe_bounds = (-2.0, 10.0)
 
-        ip = "147.250.140.65"
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
         port = "5555"
         
         description = "Vertical position of the gas jet."

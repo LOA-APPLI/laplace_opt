@@ -18,7 +18,7 @@ class CriteriumStructure:
                 "description": (
                     "Maximum number of model iterations (init + opt).\n"
                     "'0' meaning endless."
-                )
+                ),
             },
 
             "n_repeats": {
@@ -27,7 +27,7 @@ class CriteriumStructure:
                 "min": 1,
                 "max": 1000,
                 "label": "Number sample repeats",
-                "description": "Number of repeated evaluations per candidate."
+                "description": "Number of repeated evaluations per candidate.",
             },
 
             "save_period": {
@@ -39,7 +39,7 @@ class CriteriumStructure:
                 "description": (
                     "Number of optimization steps between automatic saves.\n"
                     "Set to '0' to disable."
-                )
+                ),
             },
 
         }

@@ -19,7 +19,6 @@ class InputStructure(ABC):
     Stores bounds, hardware address, metadata, and position index
     used to map values inside payloads.
     '''
-    
     def __init__(self, 
                  name: str,
                  bounds: Sequence[float], 
@@ -34,34 +33,33 @@ class InputStructure(ABC):
         Initialize an input definition.
 
             Args:
-                name: (str) 
+                name (str):
                     Variable name.
                 
-                bounds: (Sequence[float])
+                bounds (Sequence[float]):
                     Optimization bounds (min, max).
                 
-                safe_bounds: (Sequence[float]) 
+                safe_bounds (Sequence[float]): 
                     Hardware-safe bounds (min, max).
                 
-                unit: (str) 
+                unit (str):  
                     Physical unit.
                 
-                ip: (str)
+                ip (str): 
                     Device IP address.
                 
-                port: (str)
+                port (str): 
                     Device port.
                 
-                description: (str) 
+                description (str):  
                     Human-readable description.
                 
-                symbol: (str) 
+                symbol (str):  
                     Short symbol for display.
                 
-                position_index: (int) 
+                position_index (int):  
                     Index in payload vector.
         '''
-        
         check_bounds_format(bounds)
         check_bounds_format(safe_bounds)
 
@@ -87,8 +85,8 @@ class InputStructure(ABC):
         return self._safe_bounds    
     
     @property
-    def address(self) -> str:
-        return self.ip_port
+    def address(self) -> str:  # legacy: I used to use the address as: <protocol>:\\<ip>:<port>
+        return self.ip_port    # like "tcp:\\ip:port", but I changed for the ip:port and kept the property
     
     @property
     def ip_port(self) -> str:

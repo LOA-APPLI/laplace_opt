@@ -3,6 +3,7 @@ from typing import Sequence
 
 # project
 from laplace_opt.model_construction import InputStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class LaserEnergy(InputStructure):
@@ -13,13 +14,12 @@ class LaserEnergy(InputStructure):
     hardware address, and metadata associated with the laser energy
     control variable.
     '''
-
     def __init__(self, bounds: Sequence[float]=(0, 5)):
         '''
         Initialize the laser energy input.
 
         Args:
-            bounds: (Sequence[float])
+            bounds (Sequence[float]):
                 Optimization bounds (min, max) in joules.
                 These define the search space limits.
         '''
@@ -27,13 +27,14 @@ class LaserEnergy(InputStructure):
         unit = "J"
         safe_bounds = (0.0, 100.0)
 
-        ip = "tmp"
-        port = "5"
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        port = "5555"
 
         description = "Laser energy"
         symbol = "E_laser"
 
-        position_index = 0
+        position_index = 4
         
         InputStructure.__init__(
             self, 
