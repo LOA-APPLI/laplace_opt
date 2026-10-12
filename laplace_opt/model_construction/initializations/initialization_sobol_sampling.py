@@ -8,7 +8,7 @@ from laplace_opt.model_construction import InitializationStructure
 
 class SobolInitialization(InitializationStructure):
     '''
-    Initialization strategy based on Sobol low-discrepancy sampling.
+    Initialization strategy based on Sobol sampling.
 
     This class generates an initial design using a Sobol sequence,
     providing a space-filling and deterministic sampling of the
@@ -20,13 +20,14 @@ class SobolInitialization(InitializationStructure):
     description = "Low-discrepancy Sobol sequence initialization"
 
     parameters = {
+
         "n_samples": {
             "type": int,
             "default": 3,
             "min": 1,
             "max": 1024,
             "label": "Number of samples",
-            "description": "Number of points to sample"
+            "description": "Number of points to sample",
         },
         
         "q_candidates": {
@@ -35,7 +36,7 @@ class SobolInitialization(InitializationStructure):
             "min": 1,
             "max": 1024,
             "label": "Number of candidates",
-            "description": "Number of proposal for each sample"
+            "description": "Number of proposal for each sample",
         },
         
         "seed": {
@@ -44,8 +45,9 @@ class SobolInitialization(InitializationStructure):
             "min": 0,
             "max": 999_999,
             "label": "Seed",
-            "description": "Seed for random generation"
-        }
+            "description": "Seed for random generation",
+        },
+
     }
 
     def generate(self, 
@@ -57,17 +59,17 @@ class SobolInitialization(InitializationStructure):
         Generate an initial set of samples using Sobol sampling.
 
         Args:
-            bounds: (torch.Tensor)
+            bounds (torch.Tensor):
                 Tensor of shape [2, d] defining lower and upper bounds
                 of the search space.
             
-            n_samples: (int)
+            n_samples (int): 
                 Number of Sobol samples to generate.
             
-            q_candidates: (int)
+            q_candidates (int): 
                 Number of candidates per sample (q-batch size).
             
-            seed: (int)
+            seed (int): 
                 Seed for Sobol sequence generation.
 
         Returns:

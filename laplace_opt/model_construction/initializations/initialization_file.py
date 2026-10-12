@@ -13,20 +13,26 @@ class FileInitialization(InitializationStructure):
     Initialization strategy based on loading previously sampled data from a file.
 
     This class restores initial design points and corresponding observations
-    from a saved checkpoint file. It allows the optimization process to
+    from a saved checkpoint file. 
+    
+    It allows the optimization process to
     resume from existing data instead of generating new initial samples.
+
+    No verification is made.
     '''
     display_name = "Load from file"
     description = "Load initial points from a 'model_observations_*.pt' file"
 
     parameters = {
+
         "path": {
             "type": str,
             "mode": "file",
             "default": "",
             "label": "File path",
             "description": "Use already sampled data"
-        }
+        },
+
     }
 
     def generate(self, 
@@ -36,15 +42,15 @@ class FileInitialization(InitializationStructure):
         Load initial samples and observations from a checkpoint file.
 
         Args:
-            bounds: (torch.Tensor)
+            bounds (torch.Tensor):
                 Tensor of shape [2, d] defining lower and upper bounds
                 of the search space. This argument is required by the
                 interface but is not used when loading from file.
             
-            path: (str)
+            path (str): 
                 Path to a checkpoint file containing stored observations.
-                The file must contain "observations" with keys
-                "X_physical" and "Y_physical".
+                The file must contain `observations` with keys
+                `X_physical` and `Y_physical`.
 
         Returns:
             tuple[torch.Tensor, torch.Tensor]:
@@ -58,7 +64,7 @@ class FileInitialization(InitializationStructure):
                 If the file does not contain the required keys or
                 cannot be properly loaded.
         '''
-        checkpoint = torch.load(Path(path))
+        checkpoint = torch.load( Path(path) )
         
         try:
             X: torch.Tensor = checkpoint["observations"]["X_physical"]

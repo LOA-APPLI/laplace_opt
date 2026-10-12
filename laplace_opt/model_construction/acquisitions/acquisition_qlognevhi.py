@@ -54,6 +54,7 @@ class qLogNEHVI(AcquisitionStructure):
                 "0.0 means exact partitioning; increase with more objectives to reduce computational cost."
             ),
         },
+        
     }
 
 

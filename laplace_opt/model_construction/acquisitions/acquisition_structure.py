@@ -31,7 +31,7 @@ class AcquisitionStructure(ABC):
             "max": 2,
             "default": 1,
             "label": "example of int parameter",
-            "description": "tooltip for this parameter"
+            "description": "tooltip for this parameter",
         },
 
         "example_float": {
@@ -42,14 +42,14 @@ class AcquisitionStructure(ABC):
             "max": 1e9,
             "default": 0,
             "label": "example of float parameter",
-            "description": "tooltip for this parameter"
+            "description": "tooltip for this parameter",
         },
         
         "example_bool": {
             "type": bool,
             "default": True,
             "label": "example of bool parameter",
-            "description": "tooltip for this parameter"
+            "description": "tooltip for this parameter",
         }
     }
 
