@@ -11,14 +11,13 @@ from botorch.utils.transforms import normalize
 class Observation:
     '''
     Represents a single evaluation result.
-    (physical space)
-    
+
     Attributes:
         x (torch.Tensor): 
             Input vector for the evaluation.
         y (torch.Tensor):
             Corresponding objective values.
-        shot_number (list[int]):
+        shot_number (int):
             Corresponding shot.
     '''
     x: torch.Tensor    # shape [d]
@@ -38,13 +37,13 @@ class OptimizationContext:
         Initialize the optimization context with problem definition.
 
         Args:
-            bounds: (torch.Tensor) 
+            bounds (torch.Tensor):
                 Bounds for each input variable.
 
-            objectives: (dict)
+            objectives (dict):
                 Dictionary of objectives to optimize.
             
-            inputs: (dict)
+            inputs (dict):
                 Dictionary of inputs to optimize
         '''
         self.bounds = bounds
@@ -59,26 +58,37 @@ class OptimizationContext:
         log.debug("Context created.")
 
     @property
-    def Y_opt_space(self):
+    def Y_opt_space(self) -> torch.Tensor:
+        '''Return the objectives in optimization space.'''
         return torch.stack([obs.y for obs in self._observations])
 
     @property
-    def Y_physical(self):
+    def Y_physical(self) -> torch.Tensor:
+        '''Return the objectives in physical space.'''
         Y = self.Y_opt_space
         Y_physical = self._to_physical(Y)
         return Y_physical
 
     @property
-    def Y_opt(self):
-        '''Return the objectives in the physical space made during the optimization phase'''
-        return self.Y_physical[self.n_init:]
+    def Y_opt(self) -> torch.Tensor:
+        '''Return the objectives in the physical space made during the optimization phase.'''
+        if self.n_init != -1:
+            return self.Y_physical[self.n_init:]
+        log.warning(f"The initialization is not set (n_init = {self.n_init}).\n" 
+                    f"Returning objectives in physical space insteaded.")
+        return self.Y_physical
 
     @property
-    def Y_init(self):
-        '''Return the objectives in the physical space made during the initialization phase'''
-        return self.Y_physical[:self.n_init]
+    def Y_init(self) -> torch.Tensor:
+        '''Return the objectives in the physical space made during the initialization phase.'''
+        if self.n_init != -1:
+            return self.Y_physical[:self.n_init]
+        log.warning(f"The initialization is not set (n_init = {self.n_init}).\n" 
+                    f"Returning objectives in physical space insteaded.")
+        return self.Y_physical
     
     def _to_physical(self, Y_opt: torch.Tensor) -> torch.Tensor:
+        '''Helper changing an objective tensor according to the min/max direction.'''
         Y_phys = Y_opt.clone()
         for i, obj in enumerate(self.objectives.values()):
             if obj.minimize:
@@ -87,35 +97,47 @@ class OptimizationContext:
 
     @property
     def shot_number_list(self) -> list[int]:
-        shot_list = [obs.shot_number for obs in self._observations]
-        return shot_list
+        '''Return the list of shot numbers.'''
+        return [obs.shot_number for obs in self._observations]
 
     @property
     def X_physical(self) -> torch.Tensor:
+        '''Return the inputs in physical space.'''
         X = torch.stack([obs.x for obs in self._observations])
         return X
     
     @property
     def X_normalized(self) -> torch.Tensor:
+        '''Return the inputs in normalized space.'''
         return normalize(self.X_physical, self.bounds)
     
     @property
-    def X_opt(self):
-        '''Return the inputs in the physical space made during the optimization phase'''
-        return self.X_physical[self.n_init:]
+    def X_opt(self) -> torch.Tensor:
+        '''Return the inputs in the physical space made during the optimization phase.'''
+        if self.n_init != -1:
+            return self.X_physical[self.n_init:]
+        log.warning(f"The initialization is not set (n_init = {self.n_init}).\n" 
+                    f"Returning inputs in physical space insteaded.")
+        return self.X_physical
     
     @property
-    def X_init(self):
-        '''Return the inputs in the physical space made during the initialization phase'''
-        return self.X_physical[:self.n_init]
+    def X_init(self) -> torch.Tensor:
+        '''Return the inputs in the physical space made during the initialization phase.'''
+        if self.n_init != -1:
+            return self.X_physical[:self.n_init]
+        log.warning(f"The initialization is not set (n_init = {self.n_init}).\n" 
+                    f"Returning inputs in physical space insteaded.")
+        return self.X_physical        
 
     def get_obj_state_dict(self) -> dict[str, dict[str, str | int | bool]]:
+        '''Helper provinding the dictionary describing each objective.'''
         obj_state_dict = {}
         for key, obj in self.objectives.items():
             obj_state_dict[key] = obj.to_dict()
         return obj_state_dict
     
     def get_input_state_dict(self) -> dict[str, dict[str, str | int | Sequence[float]]]:
+        '''Helper providing the dictionary describing each input.'''
         input_state_dict = {}
         for key, input in self.inputs.items():
             input_state_dict[key] = input.to_dict()
@@ -125,34 +147,33 @@ class OptimizationContext:
         '''
         Add a single observation to the context.
 
+        Both the input x and output y must be given in physical space.
+        
+        This method will apply a transformation on y in order to save
+        it in optimization space (taking the opposite if the objective
+        must be minimized).
+
         Args:
-            x: (torch.Tensor)
+            x (torch.Tensor): 
                 Input vector of shape [d].
-            y: (torch.Tensor)
+            y (torch.Tensor): 
                 Corresponding objective values of shape [n_obj].
-                (this method will apply the opposite value in case of minimization)
         '''
         y_corrected = y.clone()
         for i, obj in enumerate(self.objectives.values()):
             if obj.minimize:
                 y_corrected[i] = -y_corrected[i]
         
-        self._observations.append(Observation(x=x, y=y_corrected, shot_number=shot_number))
-        log.debug(f"Observation added: x={x.tolist()}, y={y_corrected.tolist()}, shot_number={shot_number}")
-
-
-    def add_observations(self, observations: list[Observation], shot_list: list[int]) -> None:
-        '''
-        Add multiple observations at once.
-
-        Args:
-            observations: (list[Observation])
-                List of Observation instances.
-        '''
-        log.debug(f"Observation size: {len(self._observations)}")
-        for (obs, shot) in zip(observations, shot_list):
-            self.add_observation(obs.x, obs.y, shot)
-        log.debug(f"{len(observations)} observations added. Total now: {len(self._observations)}")
+        self._observations.append(
+            Observation(
+                x=x, 
+                y=y_corrected, 
+                shot_number=shot_number
+                )
+            )
+        log.debug(f"Observation added: x={x.tolist()}," 
+                  f"y={y_corrected.tolist()}," 
+                  f"shot_number={shot_number}")
 
 
     def X_by_objective(self) -> list[torch.Tensor]:
@@ -180,17 +201,13 @@ class OptimizationContext:
     def Y_by_objective(self) -> list[torch.Tensor]:
         '''
         Get output tensors grouped by objective.
-        (return the value in objective space, use 'Y_physical'
-        for return the objective in physical space)
+        (return the value in objective space)
 
         Returns:
             list[torch.Tensor]: 
                 List of tensors, one per objective, containing 
                 the corresponding objective values.        
         '''
-        if not self._observations:
-            log.warning("No observation available.")
-        
         Ys = [[] for _ in range(self.n_obj)]
 
         for obs in self._observations:
@@ -206,27 +223,18 @@ class OptimizationContext:
 
     def get_X_baseline(self) -> torch.Tensor:
         '''
-        Get all unique evaluated input points.
-        (return the position in physical space, use 
-        'get_X_baseline_normalized' for the normalized space)
+        Get all unique evaluated input points in physical space.
 
         Returns:
             torch.Tensor: 
                 Concatenated and unique inputs across all observations.        
         '''
-        if not self._observations:
-            log.warning("No baseline points available.")
-
-        X = torch.stack([obs.x for obs in self._observations])
-        log.debug(f"Baseline points retrieved: {X.shape[0]} points")
-
-        return torch.unique(X, dim=0)
+        return torch.unique(self.X_physical, dim=0)
     
 
     def get_X_baseline_normalized(self) -> torch.Tensor:
         '''
-        Get normalized baseline inputs according to bounds.
-        (use 'get_X_baseline' for physical space)
+        Get all unique evaluated input points in normalized space.
 
         Returns:
             torch.Tensor: 
@@ -245,14 +253,12 @@ class OptimizationContext:
             torch.Tensor: 
                 Reference point vector of shape [n_obj].
         '''
-        Y = torch.stack([obs.y for obs in self._observations])
-
+        Y = self.Y_opt_space
         ref = Y.min(dim=0).values - 0.1 * Y.abs().max(dim=0).values
-
         return ref
 
 
-    def get_ref_point_physical(self):
+    def get_ref_point_physical(self) -> torch.Tensor:
         '''
         Compute a reference point for multi-objective optimization.
 
@@ -269,25 +275,27 @@ class OptimizationContext:
         return ref
     
 
-    def compute_pareto_front(self, Y: torch.Tensor) -> torch.Tensor:
+    def compute_pareto_front(self, Y_opt: torch.Tensor) -> torch.Tensor:
         '''
         Compute the 2D Pareto front of the given Y tensor.
 
         Args:
-            Y: Tensor of shape [n_points, 2]
+            Y (torch.Tensor): 
+                Tensor of shape [n_points, 2] in optimization space.
 
         Returns:
-            Tensor of Pareto-optimal points, shape [n_pareto, 2]
+            torch.Tensor:
+                Tensor of Pareto-optimal points, shape [n_pareto, 2]
         '''
-        if Y.numel() == 0:
-            return Y
+        if Y_opt.numel() == 0:
+            return Y_opt
 
-        if Y.shape[1] != 2:
-            raise ValueError("pareto_front currently supports exactly 2 objectives.")
+        if Y_opt.shape[1] != 2:
+            raise ValueError("compute_pareto_front currently supports exactly 2 objectives.")
 
         # Sort by objective 0 (descending = best first)
-        order = torch.argsort(Y[:, 0], descending=True)
-        Y_sorted = Y[order]
+        order = torch.argsort(Y_opt[:, 0], descending=True)
+        Y_sorted = Y_opt[order]
 
         pareto_mask = torch.zeros(Y_sorted.shape[0], dtype=torch.bool)
 
@@ -302,26 +310,21 @@ class OptimizationContext:
 
 
     def get_pareto_front(self) -> torch.Tensor:
-        '''
-        2D Pareto front in optimization space (maximize/maximize).
-        '''
-        Y = torch.stack([obs.y for obs in self._observations])
+        '''2D Pareto front in optimization space.'''
+        Y = self.Y_opt_space
         if Y.numel() == 0:
             return Y
-
         return self.compute_pareto_front(Y)
     
 
     def get_pareto_front_physical(self) -> torch.Tensor:
-        '''
-        2D Pareto front expressed in physical objective space.
-        '''
+        '''2D Pareto front expressed in physical objective space.'''
         Y_pareto_opt = self.get_pareto_front()
         if Y_pareto_opt.numel() == 0:
             return Y_pareto_opt
-
         return self._to_physical(Y_pareto_opt)
 
 
     def set_step(self, step: int):
+        '''Set the optimization step.'''
         self.step = step

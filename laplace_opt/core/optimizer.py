@@ -263,6 +263,9 @@ class Optimizer(QObject):
         '''
         Add the received data to the context, looks for new suggestions
         and emit a signal to send the new requested points. 
+
+        The observations are expected in physical space
+        (both for inputs and outputs)
         '''
 
         if self.context.n_init == -1:                   # if the number of initial points was not set
@@ -278,6 +281,7 @@ class Optimizer(QObject):
             return           
 
         log.debug(f"model_saver counter = {self.model_saver.counter} + 1 (for init), max_it = {self.max_it}")
+        self.context.set_step(self.model_saver.counter)
         if self.max_it > 0:
             if self.max_it <= self.model_saver.counter + 1:
                 log.info("Optimization reached the maximum number of (init + optimization) step.")
