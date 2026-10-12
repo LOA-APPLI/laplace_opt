@@ -1,8 +1,14 @@
 class CriteriumStructure:
+    '''
+    Base class for the additional
+    parameter selection.
+    '''
 
     def __init__(self):
+        '''Initialize the parameter dictionary.'''
 
         self.parameters = {
+
             "max_iterations": {
                 "type": int,
                 "default": 5,
@@ -35,4 +41,5 @@ class CriteriumStructure:
                     "Set to '0' to disable."
                 )
             },
+
         }
