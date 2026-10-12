@@ -12,17 +12,19 @@ class AcquisitionStructure(ABC):
     '''
     Base class for acquisition function structures.
 
-    This class defines a common interface for building acquisition functions
-    used in Bayesian optimization. Subclasses should implement the `build_acq`
+    This class defines a common interface for building 
+    acquisition functions used in Bayesian optimization. 
+    
+    Subclasses should implement the `build_acq`
     method to return a configured acquisition function.
     '''
-    
     display_name: str = "Acquisition Structure"
     description: str = "Acquisition Structure description"
     nb_min_obj_required: int
     nb_max_obj_required: int
     
     parameters: dict[str, dict] = {
+
         "example_int": {
             "type": int,
             "min": 1,
@@ -61,10 +63,10 @@ class AcquisitionStructure(ABC):
         Construct the acquisition function.
 
         Args:
-            model:
+            model (Model):
                 Fitted surrogate model representing the posterior.
             
-            context: (OptimizationContext)
+            context (OptimizationContext):
                 context providing access to baseline data
                 and other relevant information.
             

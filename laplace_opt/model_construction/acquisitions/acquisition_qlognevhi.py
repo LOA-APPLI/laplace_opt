@@ -17,6 +17,7 @@ class qLogNEHVI(AcquisitionStructure):
 
     This class defines a Monte Carlo acquisition function for
     batch Bayesian optimization in a noisy multi-objective setting.
+    
     It leverages a quasi-Monte Carlo sampler to estimate the expected
     hypervolume improvement in logarithmic space for improved numerical stability.
     '''
@@ -29,6 +30,7 @@ class qLogNEHVI(AcquisitionStructure):
     nb_max_obj_required: int = 10_000
 
     parameters = {
+
         "mc_samples": {
             "type": int, 
             "default": 128,
@@ -63,10 +65,10 @@ class qLogNEHVI(AcquisitionStructure):
         Construct the qLogNEHVI acquisition function.
 
         Args:
-            model: (Model)
+            model (Model): 
                 Fitted BoTorch model representing the surrogate posterior.
 
-            context: (OptimizationContext)
+            context (OptimizationContext):
                 Optimization context providing access to baseline data,
                 reference points, and normalized design points.
 
