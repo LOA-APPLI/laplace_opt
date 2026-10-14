@@ -1,8 +1,8 @@
 # libraries
 from abc import ABC, abstractmethod
 
-import torch
 from botorch.models.model import Model
+import torch
 
 # project
 from laplace_opt.core.optimizerContext import OptimizationContext
@@ -13,16 +13,18 @@ class StrategyStructure(ABC):
     Base class for model construction strategies.
 
     This class defines a common interface for building surrogate models
-    used in Bayesian optimization. Subclasses should implement the
-    `build_model` method to return a fitted BoTorch model.
-    '''
+    used in Bayesian optimization. 
     
+    Subclasses should implement `build_model`, `fit_model` and `posterior`
+    methods.
+    '''
     display_name: str
     description: str
     parameters: dict
 
     # parameters required for every strategy
     core_parameters = {
+
         "seed": {
             "type": int,
             "default": 0,
@@ -72,12 +74,12 @@ class StrategyStructure(ABC):
                     context: OptimizationContext,
                     **params) -> Model:
         '''
-        Construct and fit a surrogate model.
+        Construct a botorch surrogate model.
 
         Args:
-            context: (OptimizationContext)
+            context (OptimizationContext):
                 Optimization context providing training inputs, observations,
-                bounds, and objective structure required to build the model.
+                bounds, and objectives required to build the model.
 
             **params:
                 Additional keyword arguments defining model-specific
@@ -85,18 +87,49 @@ class StrategyStructure(ABC):
 
         Returns:
             Model:
-                A fitted BoTorch model representing the surrogate posterior,
-                ready to be used by an acquisition function.
+                A BoTorch model representing the surrogate posterior,
+                **before fitting**.
         '''
 
 
     @abstractmethod
-    def fit_model(self, model: Model) -> Model:
+    def fit_model(self, 
+                  model: Model,
+                  **params) -> Model:
         '''
-        Fit the model
+        Fit the botorch model produced in `build_model`.
+
+        Args:
+            model (Model):
+                The model build by this strategy.
+
+            **params:
+                Additional keyword arguments defining
+                hyperparameters.
+        
+        Returns:
+            Model:
+                A fitted Botorch model, ready to be
+                used by an acquisition function.
         '''
 
     @abstractmethod
-    def posterior(self, model: Model, X_norm: torch.Tensor) -> tuple[dict, dict, dict]:
-        '''        
+    def posterior(self, model: Model, X_norm: torch.Tensor) -> tuple[list, list, list]:
+        '''
+        Sample the posterior produced by this strategy.
+
+        Args:
+            model (Model):
+                A Botorch surogate, from which we can
+                get the posterior.
+            
+            X_norm (torch.Tensor):
+                The positions in normalized space
+                where the posterior must be sampled.
+        
+        Returns:
+            tuple[list, list, list]:
+                The posterior object, along with the
+                means and stds values obtained by
+                sampling the posterior over X_norm.
         '''

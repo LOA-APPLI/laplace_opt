@@ -72,8 +72,12 @@ def fit_model(strat: dict[str, type[StrategyStructure] | dict[str, Any]],
         f"{strat['cls'].__name__}"
     )    
     strategy_cls = strat["cls"]()
+    strategy_params = strat.get("params", {})
 
-    model = strategy_cls.fit_model(model)
+    model = strategy_cls.fit_model(
+        model=model,
+        **strategy_params,
+    )
     log.debug("Model fitted.")
 
     return model
