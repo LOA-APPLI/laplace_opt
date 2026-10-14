@@ -2,7 +2,7 @@
 
 PyQt6-based GUI application for **Laplace optimization** workflows.
 
-This package provides a desktop application with a structured logging system and optional server protocol integration. It is designed to launch an interactive optimization window (`OptWindow`) and handle data and logs cleanly, suitable for research and scientific workflows.
+This package provides a desktop application with a structured logging system and server protocol integration. It is designed to launch an interactive optimization window (`OptWindow`) and handle data and logs cleanly, suitable for research and scientific workflows.
 
 ---
 
@@ -42,15 +42,26 @@ python -m laplace_opt.main
 laplace_opt/
 ├── laplace_opt/
 │   ├── main.py                 # Entry point launching the GUI
-│   ├── config.ini              # Default configuration
+│   ├── app_config.ini          # Default configuration
 │   ├── interface/              # GUI window implementation
 │   ├── core/                   # Optimization process
 │   ├── model_construction/     # Optimization ressources
+|   ├── post_analysis/          # Result interpreter
 │   ├── utils/                  # Helpers
 ├── tests/                      # Test scripts
 ├── LICENSE                     # GPL-3.0 License
 └── README.md                   # Project README
 ```
+
+---
+
+## To be done
+
+- Option in order to follow an input or output without optimizing it.
+- Improve PlotWidget and the posterior plot. (3D + bug corrections).
+- PostAnalysis must be corrected / adapted (especially now that the model is saved).
+- Changing the formalism for the suggestion in order to avoid [None, None, ..., None] list.
+- In plot window, propose to plot the acquisition function?
 
 ---
 
