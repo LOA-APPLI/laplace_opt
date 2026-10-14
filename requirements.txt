@@ -1,0 +1,7 @@
+PyQt6
+qdarkstyle
+laplace-log
+laplace-server
+matplotlib
+torch
+botorch

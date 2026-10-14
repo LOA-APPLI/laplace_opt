@@ -21,7 +21,13 @@ This package provides a desktop application with a structured logging system and
 Install dependencies:
 
 ```bash
-pip install PyQt6 qdarkstyle botorch laplace-server laplace-log
+pip install PyQt6 qdarkstyle torch botorch laplace-server laplace-log matplotlib
+```
+
+Install package:
+
+```bash
+pip install laplace-opt
 ```
 
 ---

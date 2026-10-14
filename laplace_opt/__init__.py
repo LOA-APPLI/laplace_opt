@@ -7,3 +7,9 @@ Usage
 -----
 See the laplace_opt.main file to get an example.
 """
+
+from .interface import OptWindow
+
+__all__ = [
+    "OptWindow"
+]

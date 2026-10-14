@@ -57,7 +57,8 @@ class OptWindow(QMainWindow):
             default_value="", 
             type=str
         )
-        log.info(f"Loading interface from '{model_path}'")
+        msg = model_path if model_path else "default"
+        log.info(f"Loading interface from '{msg}'")
         
         self.source = ModelSource(
             external_path=model_path

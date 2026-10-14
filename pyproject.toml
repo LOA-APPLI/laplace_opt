@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "laplace-opt"
+version = "0.1.2"
+description = "Bayesian optimizer for LAPLACE project."
+readme = "README.md"
+requires-python = ">=3.12"
+
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+
+authors = [
+  { name = "SemionTche" }
+]
+
+maintainers = [
+    { name = "LOA-Appli" }
+]
+
+dependencies = [
+    "PyQt6", "qdarkstyle",
+    "laplace-log", "laplace-server",
+    "matplotlib", "torch", "botorch",
+]
+
+keywords = [
+    "Bayesian optimization", "GUI", "optimizer",
+    "server", "laplace", "ZMQ",
+    "ZeroMQ", "LHC", "control-system",
+    "instrumentation", "PyQt", "messaging"
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/LOA-APPLI/laplace_opt"
+Repository = "https://github.com/LOA-APPLI/laplace_opt"
+Issues = "https://github.com/LOA-APPLI/laplace_opt/issues"
+
+
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["laplace_opt", "laplace_opt.*"]
+namespaces = false
+
+
+[tool.setuptools.package-data]
+laplace_opt = [
+    "**/*",
+]

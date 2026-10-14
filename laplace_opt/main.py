@@ -1,4 +1,5 @@
 # libraries
+from pathlib import Path
 import sys
 import logging
 
@@ -6,10 +7,12 @@ from PyQt6.QtWidgets import QApplication
 from laplace_log import LoggerLHC, log
 from laplace_server.protocol import LOGGER_NAME
 
+APP_ROOT = Path(__file__).resolve().parent.parent  # put your own path
+
 # Initialize the logger
 LoggerLHC(
     app_name="laplace.opt", 
-    log_root=None,
+    log_root=APP_ROOT,
     file_level="debug", 
     console_level="info"
 )
