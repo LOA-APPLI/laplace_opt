@@ -1,5 +1,6 @@
 # project
 from laplace_opt.model_construction import ObjectiveStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class ElectronCountsIn(ObjectiveStructure):
@@ -7,16 +8,15 @@ class ElectronCountsIn(ObjectiveStructure):
     Objective definition for the electron counts in.
 
     This class defines the optimization direction (minimize or maximize),
-    measurement source address, payload key, and metadata associated with
-    the electron counts in objective.
+    the measurement address, the payload key, and the metadata associated 
+    with the electron counts in.
     '''
-
-    def __init__(self, minimize = False):
+    def __init__(self, minimize: bool = False):
         '''
         Initialize the electron counts in objective.
 
         Args:
-            minimize: (bool)
+            minimize (bool):
                 If True, the objective will be minimized.
                 If False, the objective will be maximized.
         '''
@@ -26,9 +26,9 @@ class ElectronCountsIn(ObjectiveStructure):
         description = "The electron counts in"
         symbol = r"$Q_{In}$"
 
-        ip = "10.0.33.3"
-        port = "1423"
-        position_index = 0
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        port = "5556"
 
         output_key = "counts_in"
 
@@ -41,6 +41,5 @@ class ElectronCountsIn(ObjectiveStructure):
             symbol=symbol,
             ip=ip,
             port=port,
-            position_index=position_index,
             output_key=output_key
         )
