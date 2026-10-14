@@ -9,6 +9,7 @@ from laplace_server.protocol import LOGGER_NAME
 # Initialize the logger
 LoggerLHC(
     app_name="laplace.opt", 
+    log_root=None,
     file_level="debug", 
     console_level="info"
 )
