@@ -12,7 +12,6 @@ class ObjectiveStructure(ABC):
     - define its optimization direction,
     - map the received measurement to a specific output key.
     '''
-    
     def __init__(self,
                  name: str,
                  unit: str,
@@ -21,41 +20,36 @@ class ObjectiveStructure(ABC):
                  symbol:str,
                  ip: str,
                  port: str,
-                 position_index: int,
                  output_key:str):
         '''
         Initialize an objective definition.
 
         Args:
             
-            name : str
+            name (str):
                 Internal identifier of the objective.
             
-            unit : str
+            unit (str):
                 Physical unit of the objective value.
             
-            minimize : bool
+            minimize (bool):
                 True if the objective must be minimized, False if maximized.
             
-            description : str
+            description (str):
                 Human-readable description of the objective.
             
-            symbol : str
+            symbol (str):
                 Symbol used in UI or scientific representation.
             
-            ip : str
+            ip (str):
                 IP address of the measurement source.
             
-            port : str
+            port (str):
                 Port of the measurement source.
             
-            position_index : int
-                Position of the objective in ordered structures (UI / vector).
-            
-            output_key : str
+            output_key (str): 
                 Key expected in the received payload for this objective.
         '''
-
         self.name = name
         self._unit = unit
         self._minimize = minimize
@@ -66,8 +60,6 @@ class ObjectiveStructure(ABC):
         self.ip = ip
         self.port = port
 
-        self.position_index = position_index
-
         self.output_key = output_key
     
     @property
@@ -76,11 +68,11 @@ class ObjectiveStructure(ABC):
     
     @property
     def ip_port(self) -> str:
-        return f"{self.ip}:{self.port}"
+        return f"{self.ip}:{self.port}"    
 
     @property
-    def address(self) -> str:
-        return self.ip_port
+    def address(self) -> str:            # legacy: I used to use the address as: <protocol>:\\<ip>:<port>
+        return self.ip_port              # like "tcp:\\ip:port", but I changed for the ip:port and kept the property
     
     @property
     def unit(self) -> str:
@@ -92,8 +84,8 @@ class ObjectiveStructure(ABC):
         self._minimize = minimize
 
 
-    def to_dict(self) -> dict[str, str | int | bool]:
-        '''State of the objective'''
+    def to_dict(self) -> dict[str, str | bool]:
+        '''State of the objective.'''
         return {
             "name": self.name,
             "unit": self.unit,
@@ -103,7 +95,6 @@ class ObjectiveStructure(ABC):
             "address": self.address,            
             "symbol": self.symbol,
             "description": self.description,
-            "position_index": self.position_index,
             "output_key": self.output_key
         }
 
@@ -114,7 +105,6 @@ class ObjectiveStructure(ABC):
             f"<{self.__class__.__name__}"
             f"(name='{self.name}', "
             f"minimize='{self.minimize}', "
-            f"unit='{self.unit}'), "
-            f"address={self.address}, "
-            f"position index={self.position_index}>"
+            f"unit='{self.unit}', "
+            f"address={self.address})"
         )

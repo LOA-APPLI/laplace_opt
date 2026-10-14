@@ -1,5 +1,4 @@
 # libraries
-from botorch.models.model import Model
 import torch
 from botorch.models import SingleTaskGP, ModelListGP
 from botorch.models.transforms.outcome import Standardize
@@ -10,6 +9,7 @@ from botorch.utils.transforms import normalize
 # kernels
 from gpytorch.kernels.rbf_kernel import RBFKernel
 from gpytorch.kernels.matern_kernel import MaternKernel
+from gpytorch.kernels.scale_kernel import ScaleKernel
 
 # project
 from laplace_opt.core.optimizerContext import OptimizationContext
@@ -55,7 +55,23 @@ class ModelList(StrategyStructure):
                 "Kernel used for each independent Gaussian Process.\n"
                 "Defines smoothness and correlation structure of the surrogate model."
             )
-        }
+        },
+
+        "nu": {
+            "type": float,
+            "decimals": 3,
+            "step": 0.1,
+            "min": 1e-3,
+            "max": 100,
+            "default": 2.5,
+            "label": "nu",
+            "description": (
+                "smoothness parameter\n"
+                "Usual are 2.5; 1.5; 0.5 (smaller values are less smooth)\n"
+                "Only used if kernel is 'Matern'"
+            ),
+        },
+
     }
 
 
@@ -63,10 +79,11 @@ class ModelList(StrategyStructure):
                     context: OptimizationContext,
                     **params) -> ModelListGP:
         '''
-        Construct independent GPs for each output dimension and combine into a ModelListGP.
+        Construct independent GPs for each output dimension 
+        and combine them into a ModelListGP.
 
         Args:
-            context: (OptimizationContext)
+            context (OptimizationContext): 
                 Provides training data for each objective and normalization bounds.
             
             **params:
@@ -82,35 +99,57 @@ class ModelList(StrategyStructure):
         train_Y_list = context.Y_by_objective()
         bounds = context.bounds
 
+        # parameters
+        kernel_kwargs = {}
         covar_cls = params.get("covar_module", RBFKernel)
         standardize = params.get("standardize_outputs", False)
+        nu = params.get("nu", 2.5)
 
-        for X, Y in zip(train_X_list, train_Y_list):
-            X_norm = normalize(X, bounds)
+        for X, Y in zip(train_X_list, train_Y_list):         # for each objective
+            X_norm = normalize(X, bounds)                    # normalize inputs
 
             outcome_transform = (
-                Standardize(m=1) if standardize else None
+                Standardize(m=1) if standardize else None    # standardize output
             )
 
-            covar = covar_cls(ard_num_dims=X.shape[-1])
+            # make the input arguments of the covar module
+            kernel_kwargs["ard_num_dims"] = X.shape[-1]
+            if covar_cls is MaternKernel:
+                kernel_kwargs["nu"] = nu
 
+            base_kernel = covar_cls(**kernel_kwargs)         # construct the covar
+            covar = ScaleKernel(base_kernel=base_kernel)     # scale it
+            
             gp = SingleTaskGP(
-                X_norm,
-                Y,
+                train_X=X_norm,
+                train_Y=Y,
                 outcome_transform=outcome_transform,
                 covar_module=covar,
             )
-
-            # mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-            # fit_gpytorch_mll(mll)
 
             models.append(gp)
 
         return ModelListGP(*models)
 
 
-    def fit_model(self, model: ModelListGP) -> ModelListGP:
-        
+    def fit_model(self, 
+                  model: ModelListGP,
+                  **params) -> ModelListGP:
+        '''
+        Fit the model provided.
+
+        Args:
+            model (ModelListGP): 
+                The model to be fitted.
+            
+            **params:
+                Additional keyword arguments.
+
+        Returns:
+            ModelListGP:
+                fitted multi-output GP model with independent 
+                SingleTaskGPs per output.
+        '''
         for gp in model.models:
             mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
             fit_gpytorch_mll(mll)
@@ -118,90 +157,32 @@ class ModelList(StrategyStructure):
         return model
 
 
-    def get_best_results(self,
-                         context: OptimizationContext,
-                         model: ModelListGP | None,
-                         **params) -> list[dict[str, int | str | bool | float | list[float]]]:
+    def posterior(self, 
+                  model: ModelListGP, 
+                  X_norm: torch.Tensor) -> tuple[list, list, list]:
         '''
-        Return best sampled point for each objective using GP posterior mean.
+        Compute the posterior of the given model over
+        the X_norm imput tensor.
 
         Args:
-            context:
-                Optimization context.
-
-        Returns:
-            list[dict]:
-                A dictionary per objective, gathering its best value,
-                the uncertainty and the position when sampling.
-        '''
-        if not model:
-            model = self.build_model(context=context, **params)
-            model = self.fit_model(model=model)
+            model (ModelListGP):
+                the model from which we compute the posterior.
+            
+            X_norm (torch.Tensor):
+                the input tensor over which sample the posterior.
         
-        train_X_list = context.X_by_objective()
-        bounds = context.bounds
-
-        n_obj = context.n_obj
-        maximize = [True] * n_obj
-        names = [""] * n_obj
-        # names = [obj.name for obj in context.objectives.values()]
-
-        for i, obj in enumerate(context.objectives.values()):
-            names[i] = obj.name
-            if obj.minimize:
-                maximize[i] = False
-
-        best_results = []
-
-        for i, (gp, X) in enumerate(zip(model.models, train_X_list)):
-
-            # normalize like during training
-            X_norm = normalize(X, bounds)
-
-            # GP posterior at sampled points
-            posterior = gp.posterior(X_norm)
-
-            mean = posterior.mean.squeeze(-1)
-            std = posterior.variance.sqrt().squeeze(-1)
-
-            # choose best according to optimization direction
-            if maximize[i]:
-                best_idx = torch.argmax(mean)
-            else:
-                best_idx = torch.argmin(mean)
-
-            best_x = X[best_idx]
-            best_y = mean[best_idx]
-            best_std = std[best_idx]
-
-            best_results.append(
-                {
-                    "objective": i,
-                    "name": names[i],
-                    "maximize": maximize[i],
-                    "best_x": best_x.tolist(),
-                    "best_y": best_y.tolist(),
-                    "uncertainty": best_std.tolist(),
-                }
-            )
-
-        return best_results
-
-
-    def posterior(self, 
-                  names: list[str], 
-                  model: ModelListGP, 
-                  X_norm: torch.Tensor) -> tuple[dict, dict, dict]:
+        Returns:
+            tuple[list, list, list]
+            the posterior, the mean and the std computed.
         '''
-        '''
-        posteriors, means, stds = {}, {}, {}
+        posteriors, means, stds = [], [], []
 
         with torch.no_grad():
-            for gp, name in zip(model.models, names):
+            for gp in model.models:
                 post = gp.posterior(X_norm)
 
-                posteriors[name] = post
-                means[name] = post.mean.squeeze(-1)
-                stds[name] = post.variance.sqrt().squeeze(-1)
+                posteriors.append( post )
+                means.append( post.mean.squeeze(-1) )
+                stds.append( post.variance.sqrt().squeeze(-1) )
 
         return posteriors, means, stds

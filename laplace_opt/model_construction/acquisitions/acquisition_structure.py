@@ -12,24 +12,26 @@ class AcquisitionStructure(ABC):
     '''
     Base class for acquisition function structures.
 
-    This class defines a common interface for building acquisition functions
-    used in Bayesian optimization. Subclasses should implement the `build_acq`
+    This class defines a common interface for building 
+    acquisition functions used in Bayesian optimization. 
+    
+    Subclasses should implement the `build_acq`
     method to return a configured acquisition function.
     '''
-    
     display_name: str = "Acquisition Structure"
     description: str = "Acquisition Structure description"
     nb_min_obj_required: int
     nb_max_obj_required: int
     
     parameters: dict[str, dict] = {
+
         "example_int": {
             "type": int,
             "min": 1,
             "max": 2,
             "default": 1,
             "label": "example of int parameter",
-            "description": "tooltip for this parameter"
+            "description": "tooltip for this parameter",
         },
 
         "example_float": {
@@ -40,15 +42,15 @@ class AcquisitionStructure(ABC):
             "max": 1e9,
             "default": 0,
             "label": "example of float parameter",
-            "description": "tooltip for this parameter"
+            "description": "tooltip for this parameter",
         },
         
         "example_bool": {
             "type": bool,
             "default": True,
             "label": "example of bool parameter",
-            "description": "tooltip for this parameter"
-        }
+            "description": "tooltip for this parameter",
+        },
     }
 
 
@@ -61,10 +63,10 @@ class AcquisitionStructure(ABC):
         Construct the acquisition function.
 
         Args:
-            model:
+            model (Model):
                 Fitted surrogate model representing the posterior.
             
-            context: (OptimizationContext)
+            context (OptimizationContext):
                 context providing access to baseline data
                 and other relevant information.
             

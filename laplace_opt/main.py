@@ -7,14 +7,19 @@ from laplace_log import LoggerLHC, log
 from laplace_server.protocol import LOGGER_NAME
 
 # Initialize the logger
-LoggerLHC("laplace.opt", file_level="debug", console_level="info")
-log.info("Starting OptWindow...")
+LoggerLHC(
+    app_name="laplace.opt", 
+    log_root=None,
+    file_level="debug", 
+    console_level="info"
+)
 
-logging.getLogger(LOGGER_NAME).setLevel(logging.INFO)
-logging.getLogger("matplotlib").setLevel(logging.WARNING)
+# set the logging instances
+logging.getLogger(LOGGER_NAME).setLevel(logging.INFO)       # from laplace-server
+logging.getLogger("matplotlib").setLevel(logging.WARNING)   # from matplotlib
+logging.getLogger("qdarkstyle").setLevel(logging.INFO)      # from qdarkstyle
 
-from laplace_log import uncaught_exception
-# from .utils import uncaught_exception
+from laplace_log import uncaught_exception    # import that allows to catch PyQt6 exceptions
 
 # project
 from .interface import OptWindow

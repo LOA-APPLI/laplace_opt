@@ -1,5 +1,6 @@
 # project
 from laplace_opt.model_construction import ObjectiveStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class ElectronCountsOut(ObjectiveStructure):
@@ -7,16 +8,15 @@ class ElectronCountsOut(ObjectiveStructure):
     Objective definition for the electron counts out.
 
     This class defines the optimization direction (minimize or maximize),
-    measurement source address, payload key, and metadata associated with
-    the electron counts out objective.
+    the measurement address, the payload key, and the metadata associated 
+    with the electron counts out.
     '''
-
-    def __init__(self, minimize = True):
+    def __init__(self, minimize: bool = True):
         '''
-        Initialize the electron counts in objective.
+        Initialize the electron counts out objective.
 
         Args:
-            minimize: (bool)
+            minimize (bool):
                 If True, the objective will be minimized.
                 If False, the objective will be maximized.
         '''
@@ -26,9 +26,9 @@ class ElectronCountsOut(ObjectiveStructure):
         description = "The electron counts out"
         symbol = r"$Q_{Out}$"
 
-        ip = "10.0.33.3"
-        port = "1423"
-        position_index = 0
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        port = "5556"
 
         output_key = "counts_out"
 
@@ -41,6 +41,5 @@ class ElectronCountsOut(ObjectiveStructure):
             symbol=symbol,
             ip=ip,
             port=port,
-            position_index=position_index,
             output_key=output_key
         )

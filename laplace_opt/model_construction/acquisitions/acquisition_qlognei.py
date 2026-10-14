@@ -15,6 +15,7 @@ class qLogNEI(AcquisitionStructure):
 
     This class defines a Monte Carlo acquisition function for
     batch Bayesian optimization in the presence of observation noise.
+    
     It leverages a quasi-Monte Carlo sampler to estimate the expected
     improvement in logarithmic space for improved numerical stability.
     '''
@@ -27,6 +28,7 @@ class qLogNEI(AcquisitionStructure):
     nb_max_obj_required: int = 1
 
     parameters = {
+
         "mc_samples": {
             "type": int, 
             "default": 128,
@@ -36,6 +38,7 @@ class qLogNEI(AcquisitionStructure):
                 "Higher values improve accuracy but increase computation time."
             ),
         },
+
     }
 
 
@@ -47,10 +50,10 @@ class qLogNEI(AcquisitionStructure):
         Construct the qLogNEI acquisition function.
 
         Args:
-            model: (Model)
+            model (Model):
                 Fitted BoTorch model representing the surrogate posterior.
             
-            context: (OptimizationContext)
+            context (OptimizationContext): 
                 Optimization context providing access to baseline data
                 and normalized design points.
             

@@ -1,4 +1,6 @@
+# project
 from laplace_opt.model_construction import ObjectiveStructure
+from laplace_opt.utils.get_ip import get_local_ip
 
 
 class ElectronEnergyMean(ObjectiveStructure):
@@ -6,16 +8,15 @@ class ElectronEnergyMean(ObjectiveStructure):
     Objective definition for the electron mean energy.
 
     This class defines the optimization direction (minimize or maximize),
-    measurement source address, payload key, and metadata associated with
-    the electron beam mean energy objective.
+    the measurement address, the payload key, and the metadata associated 
+    with the electron beam mean energy.
     '''
-
     def __init__(self, minimize: bool = False):
         '''
         Initialize the electron mean energy objective.
 
         Args:
-            minimize: (bool)
+            minimize (bool):
                 If True, the objective will be minimized.
                 If False, the objective will be maximized.
         '''
@@ -25,9 +26,9 @@ class ElectronEnergyMean(ObjectiveStructure):
         description = "The spectrum mean energy"
         symbol = r"$E_0$"
 
-        ip = "147.250.140.65"
+        ip_tmp = get_local_ip()
+        ip = ip_tmp if ip_tmp else "0.0.0.0"
         port = "5556"
-        position_index = 0
 
         output_key = "electron_energy_mean"
 
@@ -40,6 +41,5 @@ class ElectronEnergyMean(ObjectiveStructure):
             symbol=symbol,
             ip=ip,
             port=port,
-            position_index=position_index,
             output_key=output_key
         )
