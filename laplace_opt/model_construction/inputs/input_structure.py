@@ -104,7 +104,7 @@ class InputStructure(ABC):
 
 
     def to_dict(self) -> dict[str, str | Sequence[float] | int]:
-        '''State of the input'''
+        '''State of the input.'''
         return {
             "name": self.name,
             "unit": self.unit,
