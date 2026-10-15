@@ -67,7 +67,7 @@ laplace_opt/
 - Improve PlotWidget and the posterior plot. (3D + bug corrections).
 - PostAnalysis must be corrected / adapted (especially now that the model is saved).
 - Changing the formalism for the suggestion in order to avoid [None, None, ..., None] list.
-- In plot window, propose to plot the acquisition function?
+- In PlotWindow, propose to plot the acquisition function?
 
 ---
 
