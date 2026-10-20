@@ -1,9 +1,9 @@
 # libraries
 import json
 import inspect
-import torch
 
 from laplace_log import log
+import torch
 
 
 def print_batch(X: torch.Tensor, inputs: dict) -> str:

@@ -7,10 +7,10 @@ function for the optimizer.
 from typing import Any
 
 from laplace_log import log
-import torch
 from botorch.models.model import Model
 from botorch.acquisition import AcquisitionFunction
 from botorch.utils.transforms import normalize
+import torch
 
 # project
 from ..core.optimizerContext import OptimizationContext

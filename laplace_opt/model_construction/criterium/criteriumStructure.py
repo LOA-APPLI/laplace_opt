@@ -1,9 +1,7 @@
 class CriteriumStructure:
     '''
-    Base class for the additional
-    parameter selection.
+    Base class for the additional parameter selection.
     '''
-
     def __init__(self):
         '''Initialize the parameter dictionary.'''
 

@@ -1,11 +1,11 @@
 # libraries
 from pathlib import Path
+from typing import Literal
 
 from PyQt6.QtWidgets import (
     QWidget, QHBoxLayout, QLineEdit, 
     QPushButton, QFileDialog,
 )
-from typing import Literal
 
 
 class PathStandardWidget(QWidget):
@@ -20,19 +20,19 @@ class PathStandardWidget(QWidget):
                  mode: Literal["file", "folder"] = "file",
                  file_filter: str = "All files (*)"):
         '''
-            Args:
-                default: (str)
-                    the default path indicated in the QLineEdit.
-                
-                button_title: (str)
-                    the label written on the button.
-                
-                mode: (str)
-                    Either 'file' or 'folder', indicates the element
-                    we are looking for.
-                
-                file_filter: (str)
-                    indicate the files extension.
+        Args:
+            default (str):
+                the default path indicated in the QLineEdit.
+            
+            button_title (str):
+                the label written on the button.
+            
+            mode (str):
+                Either 'file' or 'folder', indicates the element
+                we are looking for.
+            
+            file_filter (str):
+                indicate the files extension.
         '''
         super().__init__()
 
@@ -76,7 +76,7 @@ class PathStandardWidget(QWidget):
                 filter=self.file_filter
             )
 
-        if path:  # if a path is selected
+        if path:                         # if a path is selected
             self.path_line.setText(path) # update the line
 
     ### helpers

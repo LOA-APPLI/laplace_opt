@@ -9,9 +9,7 @@ import torch
 
 # project
 from ..core.optimizerContext import Observation
-from ..model_construction import (
-    InputStructure, ObjectiveStructure
-)
+from ..model_construction import ObjectiveStructure
 
 
 def parse_results(results: list, 
