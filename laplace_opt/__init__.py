@@ -1,15 +1,13 @@
 # libraries
 from importlib.metadata import version, PackageNotFoundError
 
-# project
-from .interface import OptWindow
-
-
 try:
     __version__ = version("laplace-opt")
 except PackageNotFoundError:
     __version__ = "0.0.0"
 
+# project
+from .interface import OptWindow
 
 __all__ = [
     "__version__",
