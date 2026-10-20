@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     QLabel, QFileDialog
 )
 from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QIntValidator
 
 # project
 from ...utils.config_helper import (
@@ -44,9 +45,18 @@ class ExecutionPanel(QGroupBox):
         exc_layout = QGridLayout(self)
 
         # Online execution
-        self.server_checkbox = QCheckBox("Run online (start server)")
+        self.server_checkbox = QCheckBox("Start server")
         self.server_entry = QLineEdit("")  # indicates the optimization server address
         self.server_entry.setReadOnly(True)
+
+        # Server port
+        self.server_port_entry = QLineEdit()
+        self.server_port_entry.setPlaceholderText("Port")
+        self.server_port_entry.setFixedWidth(45)
+        self.server_port_entry.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Accept only valid TCP/UDP port numbers
+        self.server_port_entry.setValidator(QIntValidator(1, 65535, self))
 
         # Model entry
         self.model_path_entry = QLineEdit()
@@ -66,6 +76,9 @@ class ExecutionPanel(QGroupBox):
         exc_layout.addWidget(self.server_checkbox, 0, 0)
         exc_layout.addWidget(QLabel("Server address:"), 0, 1)
         exc_layout.addWidget(self.server_entry, 0, 2)
+
+        exc_layout.addWidget(QLabel("Server port:"), 1, 0)
+        exc_layout.addWidget(self.server_port_entry, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
         exc_layout.addWidget(QLabel("Model path:"), 1, 1)
         exc_layout.addWidget(self.model_path_entry, 1, 2)
@@ -91,6 +104,15 @@ class ExecutionPanel(QGroupBox):
         
             # get and set default model path
         self.set_path_model( str(self.source.root) )
+
+            # Read the port from the configuration
+        self.server_port = get_from_config(
+            module="server",
+            item="port",
+            default_value=1254,
+            type=int
+        )
+        self.server_port_entry.setText(str(self.server_port))
 
 
     def actions(self) -> None:
@@ -121,6 +143,16 @@ class ExecutionPanel(QGroupBox):
         # when the saving path is modified, change the default saving path
         self.saving_entry.textChanged.connect(
             self.on_save_path_changed
+        )
+
+        # Update port editability when the server state changes
+        self.server_checkbox.toggled.connect(
+            self.update_server_port_state
+        )
+
+        # Save the port when editing finishes
+        self.server_port_entry.editingFinished.connect(
+            self.on_server_port_changed
         )
 
 
@@ -161,10 +193,11 @@ class ExecutionPanel(QGroupBox):
         # list of widgets to lock
         widgets = [
             self.server_checkbox,
+            self.server_port_entry,
             self.model_path_entry,
             self.model_browse_button,
             self.saving_entry,
-            self.save_browse_button
+            self.save_browse_button,
         ]
 
         for w in widgets: # for every widget
@@ -182,6 +215,8 @@ class ExecutionPanel(QGroupBox):
             
             if self.get_path_saving() != self.save_path:   # if the current saving path != the one registered during locked
                 self.saving_entry.setText(self.save_path)  # set the saving path 
+
+            self.update_server_port_state(checked=self.is_online_enabled())  # unlock the server port only if server is off
 
 
     def browse_folder(self, is_model: bool=True) -> None:
@@ -205,18 +240,43 @@ class ExecutionPanel(QGroupBox):
                 self.set_path_saving(path)
 
 
+    def update_server_port_state(self, checked: bool = False) -> None:
+        '''
+        Enable port editing only when the server is off
+        and the configuration is unlocked.
+        '''
+        can_edit = not checked and not self.is_locked()
+        self.server_port_entry.setEnabled(can_edit)
+
+
+    def on_server_port_changed(self) -> None:
+        '''Save a valid server port to app_config.ini.'''
+        if not self.server_port_entry.hasAcceptableInput():
+            self.server_port_entry.setText(str(self.server_port))
+            return
+
+        port = int(self.server_port)
+
+        set_in_config(
+            module="server",
+            item="port",
+            val=port
+        )
+
+        self.server_port = port
+        log.debug(f"Server port modified: {port}")
+
     ### helpers
 
     def get_execution(self) -> dict[str, bool | str]:
-        '''
-        Return the execution dictionary defining the
-        online / offline, reading and saving procedure. 
-        '''
-        execution = {}
-        execution["is_online"] = self.is_online_enabled()
-        execution["model_path"] = self.get_path_model()
-        execution["saving_path"] = self.get_path_saving()
-        execution["server_address"] = self.get_server_address()
+        '''Return the execution configuration.'''
+        execution = {
+            "is_online": self.is_online_enabled(),
+            "model_path": self.get_path_model(),
+            "saving_path": self.get_path_saving(),
+            "server_address": self.get_server_address(),
+            "server_port": self.get_server_port(),
+        }
 
         return execution
 
@@ -237,6 +297,9 @@ class ExecutionPanel(QGroupBox):
     def get_server_address(self) -> str:
         return self.server_entry.text().strip()
 
+    def get_server_port(self) -> int:
+        '''Return the configured server port.'''
+        return int(self.server_port_entry.text())
         
         ### setters
     def set_path_model(self, path: str) -> None:
