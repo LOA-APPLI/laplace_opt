@@ -4,4 +4,5 @@ laplace-log
 laplace-server
 matplotlib
 torch
+gpytorch
 botorch
