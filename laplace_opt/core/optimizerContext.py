@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import Sequence
 
 from laplace_log import log
-import torch
 from botorch.utils.transforms import normalize
+import torch
 
 
 @dataclass

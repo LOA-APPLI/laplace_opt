@@ -2,7 +2,7 @@
 from laplace_log import log
 
 from laplace_server.protocol import DEVICE_OPT
-from laplace_server.server_lhc import ServerLHC
+from laplace_server import ServerLHC
 from laplace_server.server_controller import ServerController
 from PyQt6.QtCore import pyqtSignal, QObject
 
@@ -86,12 +86,7 @@ class OptManager(QObject):
         
         if self.is_online: # if dealing with a server
 
-            # when the server receives a CMD_OPT, update the optimizer
-            # self.server_controller.opt_received.connect(
-            #     self.optimizer.update_opt
-            # )
-
-            # when the server receives a CMD_OPT, send it to the plot window
+            # when the server receives a CMD_OPT, send to optimizer and plot
             self.server_controller.opt_received.connect(
                 self._handle_new_result
             )
@@ -207,6 +202,7 @@ class OptManager(QObject):
 
         self.data_for_plot.emit(results)
         self.optimizer.update_opt(observations=observations)
+
     
     def _handle_new_posterior(self, posterior: dict) -> None:
         '''Emit the posterior received.'''

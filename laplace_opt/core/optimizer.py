@@ -3,20 +3,20 @@ from pathlib import Path
 
 from laplace_log import log
 from PyQt6.QtCore import pyqtSignal, QObject
-import torch
 from botorch.optim import optimize_acqf
 from botorch.utils.transforms import normalize, unnormalize
+import torch
 
 # project
 from .optimizerContext import OptimizationContext, Observation
 from .modelSaver import ModelSaver
+from ..utils.config_helper import get_from_config
 from ..utils.json_encoder import (
     json_style, format_candidate_batch
 )
 from ..utils.build_payload import (
     get_inputs, get_objectives, build_data_payload
 )
-from ..utils.config_helper import get_from_config
 from ..utils.build_opt import(
     build_model, fit_model, 
     build_acq, build_posterior,

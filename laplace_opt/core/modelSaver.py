@@ -28,7 +28,6 @@ class ModelSaver:
 
     The saved checkpoint allows full optimization resumption.
     '''
-
     def __init__(self, 
                  save_folder: Path, 
                  save_period: int, 
