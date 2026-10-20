@@ -1,9 +1,10 @@
 # libraries
 from typing import Sequence
 
+from laplace_server.get_ip import get_ip
+
 # project
 from laplace_opt.model_construction import InputStructure
-from laplace_opt.utils.get_ip import get_local_ip
 
 
 class GasJetTransverse(InputStructure):
@@ -28,7 +29,7 @@ class GasJetTransverse(InputStructure):
         unit = "um"
         safe_bounds = (0.0, 15.0)
 
-        ip_tmp = get_local_ip()
+        ip_tmp = get_ip(name="opt")
         ip = ip_tmp if ip_tmp else "0.0.0.0"
         port = "5555"
 

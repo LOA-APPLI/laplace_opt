@@ -1,6 +1,8 @@
+# libraries
+from laplace_server.get_ip import get_ip
+
 # project
 from laplace_opt.model_construction import ObjectiveStructure
-from laplace_opt.utils.get_ip import get_local_ip
 
 
 class ElectronCountsOut(ObjectiveStructure):
@@ -26,8 +28,7 @@ class ElectronCountsOut(ObjectiveStructure):
         description = "The electron counts out"
         symbol = r"$Q_{Out}$"
 
-        ip_tmp = get_local_ip()
-        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        ip = get_ip(name="opt")
         port = "5556"
 
         output_key = "counts_out"

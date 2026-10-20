@@ -1,9 +1,10 @@
 # libraries
 from typing import Sequence
 
+from laplace_server.get_ip import get_ip
+
 # project
 from laplace_opt.model_construction import InputStructure
-from laplace_opt.utils.get_ip import get_local_ip
 
 
 class GasPressure(InputStructure):
@@ -20,8 +21,7 @@ class GasPressure(InputStructure):
         unit = "bar"
         safe_bounds = (0.0, 100.0)
 
-        ip_tmp = get_local_ip()
-        ip = ip_tmp if ip_tmp else "0.0.0.0"
+        ip = get_ip(name="opt")
         port = "5555"
 
         description = "Gas pressure"
