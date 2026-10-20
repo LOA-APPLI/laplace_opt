@@ -6,9 +6,9 @@ from PyQt6.QtWidgets import (
 
 # project
 from ...model_construction import CriteriumStructure
+from ...utils.model_source import ModelSource
 from ...utils.standard_widgets import load_standard_widgets
 from ...utils.getter import get_criterium_cls
-from ...utils.model_source import ModelSource
 
 
 class CriteriumPanel(QGroupBox):

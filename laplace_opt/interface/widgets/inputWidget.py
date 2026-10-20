@@ -3,7 +3,8 @@ from pathlib import Path
 
 from laplace_log import log
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QCheckBox, QLabel, QDoubleSpinBox
+    QWidget, QHBoxLayout, QCheckBox, 
+    QLabel, QDoubleSpinBox,
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon
@@ -83,15 +84,6 @@ class InputWidget(QWidget):
         self.ip_port_label.setEnabled(False)
         self.ip_port_label.setToolTip("The ip:port of the input device used by the server")
         line_layout.addWidget(self.ip_port_label)
-
-        # position index
-        self.position_label = QLabel()
-        self.position_label.setText(str(self.position_index) or "Unknown")
-        self.position_label.setEnabled(False)
-        self.position_label.setFixedWidth(20)
-        self.position_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.position_label.setToolTip("The position of the input device in the server list")
-        line_layout.addWidget(self.position_label)
 
         # motor number
         self.motor_label = QLabel()
@@ -245,4 +237,3 @@ class InputWidget(QWidget):
     def enable_ip_port(self, enable: bool) -> None:
         '''Enable / disable the 'ip_port' and 'position_index' fields.'''
         self.ip_port_label.setEnabled(enable)
-        self.position_label.setEnabled(enable)

@@ -1,7 +1,7 @@
 # libraries
 from laplace_log import log
 from PyQt6.QtWidgets import (
-    QGroupBox, QGridLayout, QRadioButton,
+    QGroupBox, QGridLayout,
     QCheckBox, QLineEdit, QPushButton,
     QLabel, QFileDialog
 )

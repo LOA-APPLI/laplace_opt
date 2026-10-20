@@ -1,6 +1,6 @@
 # libraries
 from PyQt6.QtWidgets import (
-    QGroupBox, QVBoxLayout, QCheckBox
+    QGroupBox, QVBoxLayout, QCheckBox,
 )
 
 # project

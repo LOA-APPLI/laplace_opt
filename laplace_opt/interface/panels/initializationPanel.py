@@ -3,7 +3,7 @@ from laplace_log import log
 from PyQt6.QtWidgets import (
     QGroupBox, QVBoxLayout, QComboBox, 
     QWidget, QLabel, QSpinBox, 
-    QGridLayout, QDoubleSpinBox, QLineEdit
+    QGridLayout, QDoubleSpinBox, QLineEdit,
 )
 
 

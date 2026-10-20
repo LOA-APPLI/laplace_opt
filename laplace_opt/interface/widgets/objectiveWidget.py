@@ -3,7 +3,8 @@ from pathlib import Path
 
 from laplace_log import log
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QCheckBox, QLabel, QComboBox
+    QWidget, QHBoxLayout, QCheckBox, 
+    QLabel, QComboBox,
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon

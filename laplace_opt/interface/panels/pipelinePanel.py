@@ -6,14 +6,14 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal
 
 # project
+from ...utils.model_source import ModelSource
+from ...model_construction import (
+    AcquisitionStructure, StrategyStructure
+)
 from ...utils.getter import get_classes
 from ...utils.standard_widgets import place_labeled_widgets
 from ...utils.config_helper import (
     get_from_config, set_in_config
-)
-from ...utils.model_source import ModelSource
-from ...model_construction import (
-    AcquisitionStructure, StrategyStructure
 )
 
 StratOrAcq = StrategyStructure | AcquisitionStructure

@@ -314,6 +314,7 @@ class OptWindow(QMainWindow):
 
 
     def set_opt_state(self, optimizing: bool):
+        '''Change the interface status.'''
         if optimizing:
             self.status_label.setText("🟡 Optimizing...")
             self.status_label.setStyleSheet("color: orange; font-weight: bold;")

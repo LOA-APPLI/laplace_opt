@@ -6,10 +6,10 @@ from PyQt6.QtWidgets import (
 )
 
 # project
-from ...utils.standard_widgets import load_standard_widgets
 from ...model_construction import (
     AcquisitionStructure, StrategyStructure
 )
+from ...utils.standard_widgets import load_standard_widgets
 
 StratOrAcq = StrategyStructure | AcquisitionStructure
 
