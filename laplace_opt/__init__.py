@@ -15,9 +15,9 @@ __all__ = [
 ]
 
 __doc__ = """
-Laplace optimization code (laplace_opt)
+Laplace optimizer (laplace_opt)
 
 Usage
 -----
-See the laplace_opt.main file to get an example.
+See the laplace_opt.main file to get an example of entry point.
 """

@@ -1,6 +1,6 @@
-# LAPLACE Opt (LAPLACE-LHC)
+# LAPLACE Optimizer (LAPLACE-LHC)
 
-**LAPLACE Opt** is a Python desktop application for Bayesian optimization workflows, built with [PyQt6](https://pypi.org/project/PyQt6/) and [BoTorch](https://botorch.org/).
+**LAPLACE Optimizer** is a Python desktop application for Bayesian optimization workflows, built with [PyQt6](https://pypi.org/project/PyQt6/) and [BoTorch](https://botorch.org/).
 
 The application provides a graphical interface for configuring and running optimization experiments, monitoring inputs and objectives, and visualizing optimization results. It integrates with the `laplace_server` protocol and `laplace_log` logging system to support structured communication and logging throughout the optimization workflow.
 
@@ -28,7 +28,7 @@ Install the required dependencies:
 pip install PyQt6 qdarkstyle torch gpytorch botorch laplace-server laplace-log matplotlib
 ```
 
-### Install LAPLACE Opt
+### Install LAPLACE Optimizer
 
 If the package is available on your configured Python package index, install it with:
 
@@ -114,5 +114,5 @@ This project is distributed under the [GNU General Public License v3.0](LICENSE)
 
 ## Project Status
 
-LAPLACE Opt is actively used within the LAPLACE ecosystem for optimization experiments. It is intended for controlled research environments and scientific workflows.
+LAPLACE Optimizer is actively used within the LAPLACE ecosystem for optimization experiments. It is intended for controlled research environments and scientific workflows.
 
