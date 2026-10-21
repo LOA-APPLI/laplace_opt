@@ -1,4 +1,4 @@
-# LAPLACE Optimizer (LAPLACE-LHC)
+# LAPLACE Optimizer (LAPLACE-HC)
 
 **LAPLACE Optimizer** is a Python desktop application for Bayesian optimization workflows, built with [PyQt6](https://pypi.org/project/PyQt6/) and [BoTorch](https://botorch.org/).
 
