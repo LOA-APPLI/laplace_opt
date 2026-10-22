@@ -29,7 +29,7 @@ class ElectronCountsIn(ObjectiveStructure):
         symbol = r"$Q_{In}$"
 
         ip = get_ip(name="opt")
-        port = "5556"
+        port = "5558"
 
         output_key = "counts_in"
 

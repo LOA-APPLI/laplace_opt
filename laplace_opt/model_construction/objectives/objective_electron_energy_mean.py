@@ -29,7 +29,7 @@ class ElectronEnergyMean(ObjectiveStructure):
         symbol = r"$E_0$"
 
         ip = get_ip(name="opt")
-        port = "5556"
+        port = "5557"
 
         output_key = "electron_energy_mean"
 

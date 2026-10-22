@@ -29,7 +29,7 @@ class ElectronCountsOut(ObjectiveStructure):
         symbol = r"$Q_{Out}$"
 
         ip = get_ip(name="opt")
-        port = "5556"
+        port = "5558"
 
         output_key = "counts_out"
 

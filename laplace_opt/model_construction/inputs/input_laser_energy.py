@@ -29,12 +29,12 @@ class LaserEnergy(InputStructure):
         safe_bounds = (0.0, 100.0)
 
         ip = get_ip(name="opt")
-        port = "5555"
+        port = "5556"
 
         description = "Laser energy"
         symbol = "E_laser"
 
-        position_index = 4
+        position_index = 1
         
         InputStructure.__init__(
             self, 

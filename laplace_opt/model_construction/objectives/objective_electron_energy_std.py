@@ -29,7 +29,7 @@ class ElectronEnergyStd(ObjectiveStructure):
         symbol = r"$\sigma_E$"
 
         ip = get_ip(name="opt")
-        port = "5556"
+        port = "5557"
 
         output_key = "electron_energy_std"
         

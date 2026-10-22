@@ -29,7 +29,7 @@ class ElectronCharge(ObjectiveStructure):
         symbol = r"$Q$"
 
         ip = get_ip(name="opt")
-        port = "5556"
+        port = "5557"
 
         output_key = "electron_charge"
 

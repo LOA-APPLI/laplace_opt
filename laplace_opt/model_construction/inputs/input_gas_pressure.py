@@ -22,12 +22,12 @@ class GasPressure(InputStructure):
         safe_bounds = (0.0, 100.0)
 
         ip = get_ip(name="opt")
-        port = "5555"
+        port = "5556"
 
         description = "Gas pressure"
         symbol = "P_gas"
 
-        position_index = 3
+        position_index = 0
 
         self.gas_type = gas_type
         
