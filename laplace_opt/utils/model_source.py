@@ -45,6 +45,10 @@ class ModelSource:
         return self.root / "strategies"
 
     @property
+    def legacy_strategy(self) -> Path:
+        return self.root / "legacy_strategies"
+
+    @property
     def acquisitions(self) -> Path:
         return self.root / "acquisitions"
 

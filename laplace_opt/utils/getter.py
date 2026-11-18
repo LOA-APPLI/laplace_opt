@@ -58,6 +58,7 @@ def check_category(category: str) -> None:
         "initializations",
         "strategies",
         "acquisitions",
+        "legacy_strategies",
     ]
     if category not in available_categories:
         raise ValueError(f"category '{category}' invalid.\n"
@@ -80,6 +81,8 @@ def get_structure(category: str):
         structure = StrategyStructure
     elif category == "acquisitions":
         structure = AcquisitionStructure
+    elif category == "legacy_strategies":
+        structure = StrategyStructure
     return structure
 
 

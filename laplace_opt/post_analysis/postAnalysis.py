@@ -292,7 +292,7 @@ class PostAnalysis:
         return self.get_context_at_step(step=step)
 
 
-    def reconstruct_model(self, ctx: OptimizationContext):
+    def reconstruct_model(self, ctx: OptimizationContext, use_legacy_strategy: bool = False):
         '''
         Reconstruct and fit the model saved in the loaded file
         from a given context. The model is retrained, which
@@ -306,14 +306,16 @@ class PostAnalysis:
             Return:
                 A fitted model retrained.
         '''
-        strat, params = self.identify_strategy()
+        strat, params = self.identify_strategy(
+            use_legacy_strategy=use_legacy_strategy
+        )
         model = strat.build_model(context=ctx, **params)
         model = strat.fit_model(model=model)
         print("Model reconstructed.")
         return model
 
 
-    def rebuild_model(self, ctx: OptimizationContext) -> Model:
+    def rebuild_model(self, ctx: OptimizationContext, use_legacy_strategy: bool = False) -> Model:
         '''
         Rebuild the model saved in the loaded file from a
         given context. If possible, the model is fitted
@@ -328,19 +330,23 @@ class PostAnalysis:
             Returns:
                 A fitted model rebuilt or retrained
         '''
-        strat, params = self.identify_strategy()
+        strat, params = self.identify_strategy(
+            use_legacy_strategy= use_legacy_strategy
+        )
         model = strat.build_model(context=ctx, **params)
         print("Model built.")
         model = self._load_model_state(
             model=model,
-            step=ctx.step
+            step=ctx.step,
+            use_legacy_strategy=use_legacy_strategy            
         )
         return model
 
 
     def get_posterior(self,
                     x_physical: torch.Tensor,
-                    step: int | None = None) -> tuple[dict[str, GPyTorchPosterior], dict[str, torch.Tensor], dict[str, torch.Tensor]]:
+                    step: int | None = None,
+                    use_legacy_strategy: bool = False) -> tuple[dict[str, GPyTorchPosterior], dict[str, torch.Tensor], dict[str, torch.Tensor]]:
         '''
         Sample the posterior at the given step.
 
@@ -358,11 +364,16 @@ class PostAnalysis:
         if step is None:                              # if step is None
             step = self.info.init_and_opt_step        # use the last step
         
-        strat, params = self.identify_strategy()      # get the strategy
+        strat, params = self.identify_strategy(      # get the strategy
+            use_legacy_strategy=use_legacy_strategy
+        )      
 
         ctx = self.get_context_at_step(step=step)     # make the context at the given step
         
-        model = self.rebuild_model(ctx=ctx)
+        model = self.rebuild_model(
+            ctx=ctx, 
+            use_legacy_strategy=use_legacy_strategy
+        )
 
         for m in model.models:
             print("lengthscale =", m.covar_module.lengthscale.detach())
@@ -373,14 +384,13 @@ class PostAnalysis:
         names = [obj.name for obj in ctx.objectives.values()]   # the objectives names
 
         post, mean, std = strat.posterior(
-            names=names,
             model=model,
             X_norm=X_norm
         )
         return post, mean, std
 
 
-    def _load_model_state(self, model: Model, step: int) -> Model:
+    def _load_model_state(self, model: Model, step: int, use_legacy_strategy: bool = False) -> Model:
         '''
         Fit a model using the state dictionary, to keep the
         same wighets as during first training. If not available,
@@ -434,8 +444,10 @@ class PostAnalysis:
             return model
 
         else:
-            strat, params = self.identify_strategy()   # get the strategy
-            model = strat.fit_model(model)             # fit the model
+            strat, params = self.identify_strategy(      # get the strategy
+                use_legacy_strategy=use_legacy_strategy
+            )   
+            model = strat.fit_model(model)               # fit the model
             print(
                 "Impossible to use the state dictionary.\n"
                 "The model had to be reconstructed."
@@ -444,16 +456,29 @@ class PostAnalysis:
         return model
 
 
-    def identify_strategy(self) -> tuple[StrategyStructure, dict]:
+    def identify_strategy(self, use_legacy_strategy: bool = False) -> tuple[StrategyStructure, dict]:
         '''
         Helper that return the strategy and the parameters 
         used in the loaded file.
+
+            Args:
+                use_legacy_strategy:
+                    If True, use the legacy strategy implementation.
 
             Returns:
                 The instanciated strategy and the parameter dictionary
         '''
         # get the strategies in model_construction
-        strategies = get_classes(dir=source.root, category="strategies")
+        if use_legacy_strategy:
+            strategies = get_classes(
+                dir=source.root,
+                category="legacy_strategies"
+            )
+        else:
+            strategies = get_classes(
+                dir=source.root,
+                category="strategies"
+            )
 
         # get the strategy and the parameters from the loaded data
         strat = self.data["problem"]["strategy"]
